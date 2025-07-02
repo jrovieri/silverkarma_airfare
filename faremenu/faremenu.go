@@ -1,8 +1,16 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+	"strings"
+	"text/tabwriter"
+)
 
 func main() {
+
+	w := new(tabwriter.Writer)
+	w.Init(os.Stdout, 0, 8, 2, ' ', 0)
 
 	var srcCity, dstCity City
 	var err error
@@ -20,7 +28,7 @@ func main() {
 		fmt.Print("Enter origin code: ")
 		fmt.Scanln(&code)
 
-		srcCity, err = getCityFromCode(code)
+		srcCity, err = getCityFromCode(strings.ToUpper(code))
 		if err == nil {
 			fmt.Println("You've entered: " + srcCity.cityName)
 			isCityValid = true
@@ -36,7 +44,7 @@ func main() {
 		fmt.Print("Enter destination code: ")
 		fmt.Scanln(&code)
 
-		dstCity, err = getCityFromCode(code)
+		dstCity, err = getCityFromCode(strings.ToUpper(code))
 		if err == nil {
 			fmt.Println("You've entered: " + dstCity.cityName)
 			isDestValid = true
@@ -47,11 +55,20 @@ func main() {
 
 	for !isCabinValid {
 
+		fmt.Println("The available classes are: ")
+		fmt.Fprintln(w, "Code\tClass\tRate")
+
+		for _, c := range cabinClasses {
+			line := fmt.Sprintf("%s\t%s\t%d\n", c.code, c.className, c.rate)
+			fmt.Fprint(w, line)
+		}
+		w.Flush()
+
 		var code string
 		fmt.Print("Enter class code: ")
 		fmt.Scanln(&code)
 
-		cabin, err = getCabinClassFromCode(code)
+		cabin, err = getCabinClassFromCode(strings.ToUpper(code))
 		if err == nil {
 			fmt.Println("You've entered: " + cabin.className)
 			isCabinValid = true
