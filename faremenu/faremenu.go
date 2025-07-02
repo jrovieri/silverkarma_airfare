@@ -4,7 +4,10 @@ import "fmt"
 
 func main() {
 
-	var origin, dest, cabin string
+	var srcCity, dstCity City
+	var err error
+	var cabin CabinClass
+
 	var isCityValid bool = false
 	var isDestValid bool = false
 	var isCabinValid bool = false
@@ -13,12 +16,13 @@ func main() {
 
 	for !isCityValid {
 
+		var code string
 		fmt.Print("Enter origin code: ")
-		fmt.Scanln(&origin)
+		fmt.Scanln(&code)
 
-		city, err := getCityFromCode(origin)
+		srcCity, err = getCityFromCode(code)
 		if err == nil {
-			fmt.Println("You've entered: " + city.cityName)
+			fmt.Println("You've entered: " + srcCity.cityName)
 			isCityValid = true
 		} else {
 			fmt.Println(err)
@@ -28,12 +32,13 @@ func main() {
 
 	for !isDestValid {
 
+		var code string
 		fmt.Print("Enter destination code: ")
-		fmt.Scanln(&dest)
+		fmt.Scanln(&code)
 
-		city, err := getCityFromCode(dest)
+		dstCity, err = getCityFromCode(code)
 		if err == nil {
-			fmt.Println("You've entered: " + city.cityName)
+			fmt.Println("You've entered: " + dstCity.cityName)
 			isDestValid = true
 		} else {
 			fmt.Println(err)
@@ -42,16 +47,30 @@ func main() {
 
 	for !isCabinValid {
 
+		var code string
 		fmt.Print("Enter class code: ")
-		fmt.Scanln(&cabin)
+		fmt.Scanln(&code)
 
-		cabinClass, err := getCabinClassFromCode(cabin)
+		cabin, err = getCabinClassFromCode(code)
 		if err == nil {
-			fmt.Println("You've entered: " + cabinClass.className)
+			fmt.Println("You've entered: " + cabin.className)
 			isCabinValid = true
 		} else {
 			fmt.Println(err)
 		}
 	}
 
+	srcLng := float64(srcCity.longitude) / 10000
+	srcLat := float64(srcCity.latitude) / 10000
+	dstLng := float64(dstCity.longitude) / 10000
+	dstLat := float64(dstCity.latitude) / 10000
+
+	distance := CalculateDistance(dstLng, dstLat, srcLng, srcLat)
+	fmt.Printf("\nDistance  : %.1f km", distance)
+
+	rate := float32(cabin.rate) / 100
+	fmt.Printf("\n$ per km  : %.2f", rate)
+
+	total := rate * float32(distance)
+	fmt.Printf("\nTotal fare: %.2f\n", total)
 }
